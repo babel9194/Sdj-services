@@ -30,6 +30,14 @@ export default async function AdminGiftCardDetailPage({ params }: AdminGiftCardD
   const { data: userResult } = await supabase.auth.admin.getUserById(submission.user_id);
   const brand = getBrandBySlug(submission.brand);
 
+  let proofSignedUrl: string | null = null;
+  if (submission.proof_url) {
+    const { data: signed } = await supabase.storage
+      .from("gift-card-proofs")
+      .createSignedUrl(submission.proof_url, 60 * 10); // valid 10 minutes
+    proofSignedUrl = signed?.signedUrl ?? null;
+  }
+
   return (
     <div>
       <Link
@@ -80,10 +88,10 @@ export default async function AdminGiftCardDetailPage({ params }: AdminGiftCardD
 
         <div className="rounded-2xl border border-ink-border bg-ink-surface p-6">
           <h2 className="font-display text-base font-semibold">Photo de la carte</h2>
-          {submission.proof_url ? (
+          {proofSignedUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={submission.proof_url}
+              src={proofSignedUrl}
               alt="Photo de la carte cadeau"
               className="mt-4 max-h-64 w-full rounded-xl border border-ink-border object-contain"
             />
