@@ -5,9 +5,13 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Category } from "@/types";
 
-export function CategoryCard({ category, index }: { category: Category; index: number }) {
-  const Icon = category.icon;
+interface CategoryCardProps {
+  category: Pick<Category, "name" | "description" | "slug">;
+  icon: React.ReactNode;
+  index: number;
+}
 
+export function CategoryCard({ category, icon, index }: CategoryCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -19,7 +23,7 @@ export function CategoryCard({ category, index }: { category: Category; index: n
       <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-signal/10 blur-2xl transition-all duration-300 group-hover:bg-signal/25" />
 
       <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-ink-raised text-signal">
-        <Icon size={20} strokeWidth={1.75} />
+        {icon}
       </div>
 
       <h3 className="relative mt-5 font-display text-lg font-semibold">{category.name}</h3>
