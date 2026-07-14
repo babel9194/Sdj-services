@@ -46,7 +46,7 @@ export function SellGiftCardForm() {
       return;
     }
 
-    let proofPath: string | null = null;
+    let proofUrl: string | null = null;
     const file = values.proof?.[0];
 
     if (file) {
@@ -60,10 +60,8 @@ export function SellGiftCardForm() {
         return;
       }
 
-      // The bucket is private — store the object path, not a public URL.
-      // Signed URLs are generated on demand where the photo is displayed
-      // (see app/admin/cartes-cadeaux/[id]/page.tsx).
-      proofPath = path;
+      const { data: publicUrl } = supabase.storage.from("gift-card-proofs").getPublicUrl(path);
+      proofUrl = publicUrl.publicUrl;
     }
 
     const { data, error } = await supabase
@@ -74,7 +72,7 @@ export function SellGiftCardForm() {
         value_amount: values.valueAmount,
         code: values.code,
         contact_phone: values.contactPhone,
-        proof_url: proofPath,
+        proof_url: proofUrl,
         status: "pending",
       })
       .select("id")
